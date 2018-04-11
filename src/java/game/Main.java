@@ -41,12 +41,12 @@ public class Main extends Application
         primaryStage.setTitle("Game");
 
         // Build all of the scenes
-//        Parent mainRoot = FXMLLoader.load(getClass().getResource("main.fxml"));
+        Parent mainRoot = FXMLLoader.load(getClass().getResource("mainScreen.fxml"));
         Parent startRoot = FXMLLoader.load(getClass().getResource("startingScreen.fxml"));
 //        Parent nameRoot = FXMLLoader.load(getClass().getResource("nameScreen.fxml"));
 
         startScene = new Scene(startRoot, 600, 400);
-//        mainScene = new Scene(mainRoot);
+        mainScene = new Scene(mainRoot);
 //        nameScreen = new Scene(nameRoot);
 
         // Display the window
