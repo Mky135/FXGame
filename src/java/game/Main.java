@@ -5,16 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.io.IOException;
-import java.util.BitSet;
 
 import static game.controller.MainController.m_circle;
 import static game.controller.MainController.transition;
@@ -41,6 +36,7 @@ public class Main extends Application
     public static Scene mainScene;
 
     public static int KEYBOARD_MOVEMENT_DELTA = 10;
+    public static int KEYBOARD_MOVEMENT_CHANGE = 5;
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     //    private Circle circle;
@@ -55,13 +51,10 @@ public class Main extends Application
         Parent startRoot = FXMLLoader.load(getClass().getResource("startingScreen.fxml"));
         Parent mainRoot = FXMLLoader.load(getClass().getResource("mainScreen.fxml"));
 
-//        circle  = MainController.circle;
-//        circle = createCircle();
-
         group = new Group(m_circle, mainRoot);
 
         startScene = new Scene(startRoot);
-        mainScene = new Scene(group, screenSize.width, screenSize.height, Color.BLACK);
+        mainScene = new Scene(group, screenSize.width/2, screenSize.height/2, Color.BLACK);
         primaryStage.setX(0);
         primaryStage.setY(0);
 
@@ -89,52 +82,59 @@ public class Main extends Application
 
     public static void main(String[] args) { launch(args); }
 
-    private BitSet keyboardBitSet = new BitSet();
+    boolean up = false;
+    boolean right = false;
+    boolean down = false;
+    boolean left = false;
 
     private void moveCircleOnKeyPress()
     {
-        System.out.println("Current Keys: ");
-
         mainScene.setOnKeyPressed(event -> {
-            keyboardBitSet.set(event.getCode().ordinal(), true);
-
-            for( KeyCode keyCode: KeyCode.values())
+            if(event.getCode() == KeyCode.UP)
             {
-                if(keyboardBitSet.get(keyCode.ordinal()))
-                    System.out.println(keyCode.toString());
-            }
-
-            if(event.getCode() == KeyCode.UP && event.getCode() == KeyCode.RIGHT)
-            {
+                up = true;
                 circleUp();
+            }
+            if(event.getCode() == KeyCode.DOWN)
+            {
+                down = true;
+                circleDown();
+            }
+            if(event.getCode() == KeyCode.RIGHT)
+            {
+                right = true;
                 circleRight();
             }
-
-            if(event.getCode() == KeyCode.UP && event.getCode() == KeyCode.LEFT)
+            if(event.getCode() == KeyCode.LEFT)
             {
-                circleUp();
+                left = true;
                 circleLeft();
             }
 
-            if(event.getCode() == KeyCode.DOWN && event.getCode() == KeyCode.RIGHT)
+            if(up && right)
+            {
+                circleRight();
+                KEYBOARD_MOVEMENT_DELTA -= KEYBOARD_MOVEMENT_CHANGE;
+                circleUp();
+            }
+            if(up && left)
+            {
+                circleUp();
+                KEYBOARD_MOVEMENT_DELTA -= KEYBOARD_MOVEMENT_CHANGE;
+                circleLeft();
+            }
+            if(down && right)
+            {
+                circleRight();
+                KEYBOARD_MOVEMENT_DELTA -= KEYBOARD_MOVEMENT_CHANGE;
+                circleDown();
+            }
+            if(down && left)
             {
                 circleDown();
-                circleRight();
+                KEYBOARD_MOVEMENT_DELTA -= KEYBOARD_MOVEMENT_CHANGE;
+                circleLeft();
             }
-
-            if(event.getCode().equals(KeyCode.DOWN) && event.getCode().equals(KeyCode.LEFT))
-            {
-            }
-
-            if(event.getCode() == KeyCode.UP)
-            { circleUp(); }
-            if(event.getCode() == KeyCode.DOWN)
-            { circleDown(); }
-            if(event.getCode() == KeyCode.RIGHT)
-            { circleRight(); }
-            if(event.getCode() == KeyCode.LEFT)
-            { circleLeft(); }
-
         });
     }
 
@@ -142,39 +142,54 @@ public class Main extends Application
     {
         m_circle.setCenterY(m_circle.getCenterY() - KEYBOARD_MOVEMENT_DELTA);
         if((m_circle.getCenterY() + m_circle.getRadius()) <= 0)
-        { m_circle.setCenterY(mainScene.getHeight() + m_circle.getRadius()); }
-        KEYBOARD_MOVEMENT_DELTA += 10;
+        { m_circle.setCenterY(mainScene.getHeight() + m_circle.getRadius()-1); }
+        KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
     }
 
     void circleDown()
     {
         m_circle.setCenterY(m_circle.getCenterY() + KEYBOARD_MOVEMENT_DELTA);
         if((m_circle.getCenterY() - m_circle.getRadius()) >= mainScene.getHeight())
-        { m_circle.setCenterY(-m_circle.getRadius()); }
-        KEYBOARD_MOVEMENT_DELTA += 10;
+        { m_circle.setCenterY(-m_circle.getRadius()+1); }
+        KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
     }
 
     void circleRight()
     {
         m_circle.setCenterX(m_circle.getCenterX() + KEYBOARD_MOVEMENT_DELTA);
         if((m_circle.getCenterX() - m_circle.getRadius()) >= mainScene.getWidth())
-        { m_circle.setCenterX(-m_circle.getRadius()); }
-        KEYBOARD_MOVEMENT_DELTA += 10;
+        { m_circle.setCenterX(-m_circle.getRadius()+1); }
+        KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
     }
 
     void circleLeft()
     {
         m_circle.setCenterX(m_circle.getCenterX() - KEYBOARD_MOVEMENT_DELTA);
         if((m_circle.getCenterX() + m_circle.getRadius()) <= 0)
-        { m_circle.setCenterX(mainScene.getWidth() + m_circle.getRadius()); }
-        KEYBOARD_MOVEMENT_DELTA += 10;
+        { m_circle.setCenterX(mainScene.getWidth() + m_circle.getRadius()-1); }
+        KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
     }
 
     public void stopOnKeyReleased()
     {
         mainScene.setOnKeyReleased(event -> {
             KEYBOARD_MOVEMENT_DELTA = 10;
-            keyboardBitSet.clear();
+
+            switch(event.getCode())
+            {
+                case UP:
+                    up = false;
+                    break;
+                case RIGHT:
+                    right = false;
+                    break;
+                case DOWN:
+                    down = false;
+                    break;
+                case LEFT:
+                    left = false;
+                    break;
+            }
         });
     }
 
