@@ -28,7 +28,6 @@ public class MainController implements Initializable
     @FXML
     public Button butt;
 
-    public static final int KEYBOARD_MOVEMENT_DELTA = 10;
     private static final Duration TRANSLATE_DURATION = Duration.seconds(0.25);
 
     @FXML
@@ -46,7 +45,7 @@ public class MainController implements Initializable
     }
 
     private Circle createCircle() {
-        final Circle circle = new Circle(151.0F, 201.0F, 100.0F, Color.DODGERBLUE);
+        final Circle circle = new Circle(150.0F, 200.0F, 100.0F, Color.DODGERBLUE);
         circle.setStroke(Color.DODGERBLUE);
         circle.setStrokeType(StrokeType.INSIDE);
         circle.setOpacity(0.5);
