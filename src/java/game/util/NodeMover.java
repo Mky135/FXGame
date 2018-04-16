@@ -13,19 +13,22 @@ public class NodeMover
 {
     /**
      * Used for movement using the keys
+     *
+     * vel
      */
     private static int KEYBOARD_MOVEMENT_DELTA = 10;
 
     /**
      * Local variable telling it how much to change by
+     *
+     * acc
      */
-
     private static int KEYBOARD_MOVEMENT_CHANGE = 2;
 
     /**
      * Used to make the circle go to random positions
      */
-    public static boolean random = false;
+    private static boolean random = false;
 
     private Scene scene;
 

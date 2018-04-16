@@ -1,0 +1,2 @@
+Circle: r:1 g:1 b:1;
+Background: r:0 g:0 b:0;

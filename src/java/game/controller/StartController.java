@@ -1,7 +1,6 @@
 package game.controller;
 
 import game.Main;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 

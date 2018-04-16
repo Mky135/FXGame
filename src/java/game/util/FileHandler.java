@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 /**
  * A class to ease the handling of files
  */
-public class FileHandler
+public class FileHandler extends File
 {
     /**
      * The path to the file
@@ -19,33 +19,11 @@ public class FileHandler
      */
     private File file;
 
-    public FileHandler(String fileName) {this.fileName = fileName;}
-
-    /**
-     * Make new file at certain path
-     *
-     * @param path path of file
-     */
-    public void newFile(String path)
+    public FileHandler(String fileName)
     {
-        file = new File(path);
-
-        try
-        {
-            if(file.createNewFile())
-            {
-                System.out.println("File is created!");
-            }
-            else
-            {
-                System.out.println("File already exists.");
-                file.delete();
-            }
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
+        super(fileName);
+        this.fileName = fileName;
+        file = new File(fileName);
     }
 
     /**
@@ -126,9 +104,8 @@ public class FileHandler
     /**
      * @return Number of lines in the file
      */
-    public int getNumLines(String path)
+    public int getNumLines()
     {
-        file = new File(path);
         int count = 0;
         if(file.exists())
         {
@@ -148,6 +125,53 @@ public class FileHandler
         }
 
         return count;
+    }
+
+    /**
+     * Builds up the file, looking for the oldLine and replacing it with the newLine
+     * @param oldLine line that is being replaced
+     * @param newLine line that is being substituted in
+     */
+    public void modifyLine(String oldLine, String newLine)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader reader = null;
+        FileWriter writer = null;
+
+        try
+        {
+            reader = new BufferedReader(new FileReader(file));
+
+            //Builds up the file looking for oldLine and replacing it with newLine
+            for(int i=0; i<getNumLines(); i++)
+            {
+                if(getLine(i).substring(0, oldLine.length()).equalsIgnoreCase(oldLine))
+                    stringBuilder.append(newLine + "\n");
+                else
+                    stringBuilder.append(getLine(i) + "\n");
+            }
+
+            //Rewriting the input text file with newContent
+            writer = new FileWriter(file);
+            writer.write(stringBuilder.toString());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                //Closing the resources
+                reader.close();
+                writer.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

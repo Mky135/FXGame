@@ -1,16 +1,9 @@
 package game.controller;
 
 import game.Main;
-import game.util.NodeMover;
 import javafx.animation.TranslateTransition;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
@@ -44,10 +37,9 @@ public class MainController implements Initializable
     }
 
     private Circle createCircle() {
-        final Circle circle = new Circle(150.0F, 200.0F, 100.0F, Color.DODGERBLUE);
-        circle.setStroke(Color.DODGERBLUE);
+        final Circle circle = new Circle(150.0F, 200.0F, 100.0F, Main.settingsHandler.getCircleColor());
+        circle.setStroke(Main.settingsHandler.getCircleColor());
         circle.setStrokeType(StrokeType.INSIDE);
-        circle.setOpacity(0.5);
         return circle;
     }
 
