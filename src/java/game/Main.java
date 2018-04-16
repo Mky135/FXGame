@@ -91,11 +91,16 @@ public class Main extends Application
         window.setY(0);
         window.setTitle(name);
         window.setScene(scene);
+
+        if(scene == mainScene)
+            loadMain();
     }
 
     public static void loadMain()
     {
-
+        m_circle.setFill(settingsHandler.getCircleColor());
+        mainScene.setFill(settingsHandler.getBackGroundColor());
+        m_circle.setStroke(Main.settingsHandler.getCircleColor());
     }
 
 

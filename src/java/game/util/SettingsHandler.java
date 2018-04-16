@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 
 public class SettingsHandler
 {
-    private FileHandler settings;
+    public static FileHandler settings;
 
     public SettingsHandler()
     {
@@ -18,14 +18,20 @@ public class SettingsHandler
 
         for(int i=0; i< string.length(); i++)
         {
-            if(chars[i] == 'r')
-                r = chars[i+2]-48;
+            if(chars[i] == 'r' && chars[i+1] == ':')
+            {
+                r = Double.valueOf(string.substring(i+2, string.indexOf("g:")));
+            }
 
-            if(chars[i] == 'g')
-                g = chars[i+2]-48;
+            if(chars[i] == 'g' && chars[i+1] == ':')
+            {
+                g = Double.valueOf(string.substring(i+2, string.indexOf("b:")));
+            }
 
-            if(chars[i] == 'b')
-                b = chars[i+2]-48;
+            if(chars[i] == 'b' && chars[i+1] == ':')
+            {
+                b = Double.valueOf(string.substring(i+2, string.length()-1));
+            }
         }
 
         return new Color(r,g,b,1);

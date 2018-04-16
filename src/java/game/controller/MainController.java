@@ -27,6 +27,12 @@ public class MainController implements Initializable
         Main.mainCircleMover.moveNodeRandom();
     }
 
+    @FXML
+    private void moveToSettings()
+    {
+        Main.switchToScene(Main.settingsScene, "Settings");
+    }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources)

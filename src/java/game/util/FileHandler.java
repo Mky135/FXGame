@@ -125,7 +125,7 @@ public class FileHandler extends File
             //Builds up the file looking for oldLine and replacing it with newLine
             for(int i=0; i<getNumLines(); i++)
             {
-                if(getLine(i).substring(0, oldLine.length()).equalsIgnoreCase(oldLine))
+                if(getLine(i).equalsIgnoreCase(oldLine))
                     stringBuilder.append(newLine + "\n");
                 else
                     stringBuilder.append(getLine(i) + "\n");
@@ -139,8 +139,6 @@ public class FileHandler extends File
         {
             e.printStackTrace();
         }
-        finally
-        {
             try
             {
                 //Closing the resources
@@ -151,7 +149,7 @@ public class FileHandler extends File
             {
                 e.printStackTrace();
             }
-        }
+
     }
 }
 
