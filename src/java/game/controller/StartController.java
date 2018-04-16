@@ -11,15 +11,15 @@ import java.util.ResourceBundle;
 public class StartController implements Initializable
 {
     @FXML
-    private void switchToMainScene(ActionEvent event)
+    private void switchToMainScene()
     {
-        Main.switchToScene(Main.mainScene);
+        Main.switchToScene(Main.mainScene, "Game");
     }
 
     @FXML
-    private void exit(ActionEvent event)
+    private void switchToSettingsScreen()
     {
-        System.exit(0);
+        Main.switchToScene(Main.settingsScene, "Settings");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package game.controller;
 
 import game.Main;
+import game.util.NodeMover;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,15 +26,13 @@ public class MainController implements Initializable
 
     public static TranslateTransition transition;
 
-    @FXML
-    public Button butt;
-
     private static final Duration TRANSLATE_DURATION = Duration.seconds(0.25);
 
     @FXML
-    private void click()
+    private void makeRandom()
     {
-        butt.setText("clicked");
+        Main.mainCircleMover.setRandom(!Main.mainCircleMover.getRandom());
+        Main.mainCircleMover.moveNodeRandom();
     }
 
 
