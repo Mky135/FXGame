@@ -1,6 +1,5 @@
 package game.controller;
 
-import game.util.SettingsHandler;
 import javafx.fxml.Initializable;
 
 import java.net.URL;

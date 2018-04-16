@@ -9,8 +9,6 @@ public class SettingsHandler
     public SettingsHandler()
     {
         settings = new FileHandler("src/Settings.txt");
-        System.out.println(getCircleColor());
-        System.out.println(getBackGroundColor());
     }
 
     private Color getColorFromText(String string)

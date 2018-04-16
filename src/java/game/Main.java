@@ -1,23 +1,15 @@
 package game;
 
-import game.util.FileHandler;
-import game.util.NodeMover;
+import game.util.CircleMover;
 import game.util.SettingsHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
 
 import static game.controller.MainController.m_circle;
 
@@ -54,9 +46,9 @@ public class Main extends Application
     private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     /**
-     * Sets the NodeMover to be in the mainScreen controlling the circle
+     * Sets the CircleMover to be in the mainScreen controlling the circle
      */
-    public static NodeMover mainCircleMover;
+    public static CircleMover mainCircleMover;
 
     public static SettingsHandler settingsHandler;
 
@@ -78,7 +70,7 @@ public class Main extends Application
         startScene = new Scene(startRoot);
         mainScene = new Scene(group, screenSize.width, screenSize.height, settingsHandler.getBackGroundColor());
         settingsScene = new Scene(settingsRoot);
-        mainCircleMover = new NodeMover(mainScene, m_circle);
+        mainCircleMover = new CircleMover(mainScene, m_circle);
 
         // Keep a reference to the window
         window = primaryStage;

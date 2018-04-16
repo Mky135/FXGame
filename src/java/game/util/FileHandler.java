@@ -19,7 +19,7 @@ public class FileHandler extends File
      */
     private File file;
 
-    public FileHandler(String fileName)
+    FileHandler(String fileName)
     {
         super(fileName);
         this.fileName = fileName;
@@ -29,12 +29,11 @@ public class FileHandler extends File
     /**
      * Read the whole file of the file at the specified path
      *
-     * @param path path of which file wanted to be read
      * @return The contents of the file (in a very large string)
      */
-    private String readWholeFile(String path) throws IOException
+    private String readWholeFile() throws IOException
     {
-        FileReader fileReader = new FileReader(path);
+        FileReader fileReader = new FileReader(fileName);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         StringBuilder result = new StringBuilder();
         String line;
@@ -46,16 +45,6 @@ public class FileHandler extends File
         fileReader.close();
 
         return result.toString();
-    }
-
-    /**
-     * Reads the whole file
-     *
-     * @return A string containing the contents of the file
-     */
-    public String readWholeFile() throws IOException
-    {
-        return readWholeFile(this.fileName);
     }
 
     /**
@@ -90,15 +79,6 @@ public class FileHandler extends File
         write.write(object.toString());
         write.flush();
         write.close();
-    }
-
-
-    /**
-     * @return fileName
-     */
-    public String getFileName()
-    {
-        return fileName;
     }
 
     /**

@@ -1,15 +1,14 @@
 package game.util;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Circle;
 
 import java.util.Random;
 
-import static game.controller.MainController.m_circle;
 import static game.controller.MainController.transition;
 
-public class NodeMover
+public class CircleMover
 {
     /**
      * Used for movement using the keys
@@ -32,14 +31,12 @@ public class NodeMover
 
     private Scene scene;
 
-    private Node node;
+    private Circle circle;
 
-    public NodeMover(){}
-
-    public NodeMover(Scene scene, Node node)
+    public CircleMover(Scene scene, Circle circle)
     {
         this.scene = scene;
-        this.node = node;
+        this.circle = circle;
 
         moveNodeOnMousePress();
         moveOnKeyPress();
@@ -101,9 +98,9 @@ public class NodeMover
 
     private void nodeUp(boolean add)
     {
-        m_circle.setCenterY(m_circle.getCenterY() - KEYBOARD_MOVEMENT_DELTA);
-        if((m_circle.getCenterY() + m_circle.getRadius()) <= 0)
-        { m_circle.setCenterY(scene.getHeight() + m_circle.getRadius()/2); }
+        circle.setCenterY(circle.getCenterY() - KEYBOARD_MOVEMENT_DELTA);
+        if((circle.getCenterY() + circle.getRadius()) <= 0)
+        { circle.setCenterY(scene.getHeight() + circle.getRadius()/2); }
 
         if(add)
             KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
@@ -111,9 +108,9 @@ public class NodeMover
 
     private void nodeDown(boolean add)
     {
-        m_circle.setCenterY(m_circle.getCenterY() + KEYBOARD_MOVEMENT_DELTA);
-        if((m_circle.getCenterY() - m_circle.getRadius()) >= scene.getHeight())
-        { m_circle.setCenterY(-m_circle.getRadius()/2); }
+        circle.setCenterY(circle.getCenterY() + KEYBOARD_MOVEMENT_DELTA);
+        if((circle.getCenterY() - circle.getRadius()) >= scene.getHeight())
+        { circle.setCenterY(-circle.getRadius()/2); }
 
         if(add)
             KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
@@ -121,17 +118,17 @@ public class NodeMover
 
     private void nodeRight()
     {
-        m_circle.setCenterX(m_circle.getCenterX() + KEYBOARD_MOVEMENT_DELTA);
-        if((m_circle.getCenterX() - m_circle.getRadius()) >= scene.getWidth())
-        { m_circle.setCenterX(-m_circle.getRadius()/2); }
+        circle.setCenterX(circle.getCenterX() + KEYBOARD_MOVEMENT_DELTA);
+        if((circle.getCenterX() - circle.getRadius()) >= scene.getWidth())
+        { circle.setCenterX(-circle.getRadius()/2); }
         KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
     }
 
     private void nodeLeft()
     {
-        m_circle.setCenterX(m_circle.getCenterX() - KEYBOARD_MOVEMENT_DELTA);
-        if((m_circle.getCenterX() + m_circle.getRadius()) <= 0)
-        { m_circle.setCenterX(scene.getWidth() + m_circle.getRadius()/2); }
+        circle.setCenterX(circle.getCenterX() - KEYBOARD_MOVEMENT_DELTA);
+        if((circle.getCenterX() + circle.getRadius()) <= 0)
+        { circle.setCenterX(scene.getWidth() + circle.getRadius()/2); }
         KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
     }
 
@@ -163,13 +160,13 @@ public class NodeMover
         scene.setOnMousePressed(event -> {
             if(!event.isControlDown())
             {
-                m_circle.setCenterX(event.getSceneX());
-                m_circle.setCenterY(event.getSceneY());
+                circle.setCenterX(event.getSceneX());
+                circle.setCenterY(event.getSceneY());
             }
             else
             {
-                transition.setToX(event.getSceneX() - m_circle.getCenterX());
-                transition.setToY(event.getSceneY() - m_circle.getCenterY());
+                transition.setToX(event.getSceneX() - circle.getCenterX());
+                transition.setToY(event.getSceneY() - circle.getCenterY());
                 transition.playFromStart();
             }
         });
@@ -181,8 +178,8 @@ public class NodeMover
         new Thread(() ->{
             while(random)
             {
-                m_circle.setCenterY(r.nextInt((int) scene.getHeight()));
-                m_circle.setCenterX(r.nextInt((int) scene.getWidth()));
+                circle.setCenterY(r.nextInt((int) scene.getHeight()));
+                circle.setCenterX(r.nextInt((int) scene.getWidth()));
                 try { Thread.sleep(100); }
                 catch(InterruptedException e) { e.printStackTrace(); }
             }
