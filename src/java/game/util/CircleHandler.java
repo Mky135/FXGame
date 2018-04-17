@@ -54,13 +54,13 @@ public class CircleHandler extends Circle
         dropShadow.setOffsetX(offset.getX());
         dropShadow.setOffsetY(offset.getY());
         Color color = Main.settingsHandler.getCircleColor();
-        dropShadow.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), .2));
+        dropShadow.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), .5));
         circle.setEffect(dropShadow);
     }
 
     private static Point getOffsetFromLighting(Circle circle)
     {
-        double radius = circle.getRadius();
+        double radius = circle.getRadius()/2;
         double lX = light.getX();
         double lY = light.getY();
         double angle = light.getAngle(circle.getCenterX(), circle.getCenterY(), lX, lY);
