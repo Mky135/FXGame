@@ -5,6 +5,7 @@ import game.util.SettingsHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
 import java.net.URL;
@@ -17,6 +18,9 @@ public class SettingsController implements Initializable
 
     @FXML
     private ColorPicker backgroundColorPicker;
+
+    @FXML
+    private TextField tickSpeed;
 
     @FXML
     private void setCircleColor()
@@ -34,12 +38,20 @@ public class SettingsController implements Initializable
     private void continueOnToMainScreen()
     {
         Main.switchToScene(Main.mainScene, "Game");
+        setTickSpeed();
+    }
+
+    private void setTickSpeed()
+    {
+        SettingsHandler.settings.modifyLine(SettingsHandler.settings.getLine(2), getNumberFormat("Tick Speed", tickSpeed.getText()));
+        System.out.println(tickSpeed.getText());
     }
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        tickSpeed.setText(String.valueOf(Main.settingsHandler.getNumberFromLine(2,"Tick Speed: ")));
     }
 
     private String getColorFormat(String start, Color color)
@@ -49,6 +61,11 @@ public class SettingsController implements Initializable
         double b = color.getBlue();
 
         return start + ": r:"+r+" g:"+g+" b:"+b+";";
+    }
+
+    public String getNumberFormat(String beginning, String value)
+    {
+        return beginning + ": " + Integer.valueOf(value) + ";";
     }
 
 }

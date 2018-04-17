@@ -1,12 +1,12 @@
 package game.util;
 
+import game.Main;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Circle;
 
 import java.util.Random;
-
-import static game.controller.MainController.transition;
+import static game.util.CircleHandler.transition;
 
 public class CircleMover
 {
@@ -28,6 +28,8 @@ public class CircleMover
      * Used to make the circle go to random positions
      */
     private static boolean random = false;
+
+    private static int tickSpeed;
 
     private Scene scene;
 
@@ -174,13 +176,14 @@ public class CircleMover
 
     public void moveNodeRandom()
     {
+        tickSpeed = Main.settingsHandler.getNumberFromLine(2,"Tick Speed: ");
         Random r = new Random();
         new Thread(() ->{
             while(random)
             {
                 circle.setCenterY(r.nextInt((int) scene.getHeight()));
                 circle.setCenterX(r.nextInt((int) scene.getWidth()));
-                try { Thread.sleep(100); }
+                try { Thread.sleep(tickSpeed); }
                 catch(InterruptedException e) { e.printStackTrace(); }
             }
         }).start();

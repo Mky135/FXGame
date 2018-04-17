@@ -1,5 +1,6 @@
 package game;
 
+import game.util.CircleHandler;
 import game.util.CircleMover;
 import game.util.SettingsHandler;
 import javafx.application.Application;
@@ -7,11 +8,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.awt.*;
-
-import static game.controller.MainController.m_circle;
 
 public class Main extends Application
 {
@@ -19,12 +19,6 @@ public class Main extends Application
      * The Stage on which all of our scenes are displayed. By keeping a reference to it, we can change scenes at any time.
      */
     private static Stage window;
-
-    /**
-     * The scene to be displayed when the user first opens the game.
-     * Contains Nodes that lets the user input if they want to move to settings screen or not
-     */
-    private static Scene startScene;
 
     /**
      * The scene to be displayed when the user is playing
@@ -50,15 +44,18 @@ public class Main extends Application
      */
     public static CircleMover mainCircleMover;
 
-    public static SettingsHandler settingsHandler;
+    public static SettingsHandler settingsHandler = new SettingsHandler();
+
+    private static Circle m_circle;
+    private static CircleHandler circleHandler;
 
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        primaryStage.setTitle("Start");
+        circleHandler = new CircleHandler();
+        m_circle = circleHandler.circle;
 
-        //Builds settings handler
-        settingsHandler = new SettingsHandler();
+        primaryStage.setTitle("Start");
 
         // Build all of the scenes
         Parent startRoot = FXMLLoader.load(getClass().getResource("startingScreen.fxml"));
@@ -67,11 +64,16 @@ public class Main extends Application
 
         Group group = new Group(m_circle, mainRoot);
 
-        startScene = new Scene(startRoot);
+        Scene startScene = new Scene(startRoot);
         mainScene = new Scene(group, screenSize.width, screenSize.height, settingsHandler.getBackGroundColor());
         settingsScene = new Scene(settingsRoot);
         mainCircleMover = new CircleMover(mainScene, m_circle);
 
+        mainScene.setOnMouseMoved(event -> {
+            circleHandler.light.setX(event.getX());
+            circleHandler.light.setY(event.getY());
+            circleHandler.updateDropShadow();
+        });
         // Keep a reference to the window
         window = primaryStage;
 
@@ -96,7 +98,7 @@ public class Main extends Application
             loadMain();
     }
 
-    public static void loadMain()
+    private static void loadMain()
     {
         m_circle.setFill(settingsHandler.getCircleColor());
         mainScene.setFill(settingsHandler.getBackGroundColor());

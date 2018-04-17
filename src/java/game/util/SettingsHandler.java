@@ -76,11 +76,16 @@ public class SettingsHandler
             color = getColorFromText(colorString);
         else
         {
-            settings.modifyLine(settings.getLine(line), start + "r:0 g:0 b:0;");
+            settings.modifyLine(settings.getLine(line), start + "r:0.0 g:0.0 b:0.0;");
             colorString = settings.getLine(line).substring(start.length(), settings.getLine(line).length());
             color = getColorFromText(colorString);
         }
 
         return color;
+    }
+
+    public int getNumberFromLine(int line, String start)
+    {
+        return Integer.valueOf(settings.getLine(line).substring(start.length(), settings.getLine(line).length()-1));
     }
 }
