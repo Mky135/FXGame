@@ -9,8 +9,10 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.controller.SettingsController">
+<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.controller.SettingsController">
   <columnConstraints>
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -18,6 +20,7 @@
 
   </columnConstraints>
   <rowConstraints>
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -34,12 +37,18 @@
       </Label>
       <ColorPicker fx:id="circleColorPicker" onAction="#setCircleColor" GridPane.columnIndex="1" />
       <ColorPicker fx:id="backgroundColorPicker" onAction="#setBackgroundColor" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <Button fx:id="continue" mnemonicParsing="false" onAction="#continueOnToMainScreen" text="Continue" GridPane.columnIndex="3" />
+      <Button fx:id="continue" mnemonicParsing="false" onAction="#continueOnToMainScreen" text="Continue" GridPane.columnIndex="4" />
       <Label text="Tick Speed: " wrapText="true" GridPane.rowIndex="2">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <TextField fx:id="tickSpeed" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+      <TextField fx:id="tickSpeed" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+       <Label text="Circle Size:" wrapText="true" GridPane.rowIndex="3">
+           <font>
+               <Font size="24.0" />
+           </font>
+       </Label>
+      <TextField fx:id="circleSize" GridPane.columnIndex="1" GridPane.rowIndex="3" />
    </children>
 </GridPane>

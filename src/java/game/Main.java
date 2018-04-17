@@ -72,8 +72,9 @@ public class Main extends Application
         mainScene.setOnMouseMoved(event -> {
             circleHandler.light.setX(event.getX());
             circleHandler.light.setY(event.getY());
-            circleHandler.updateDropShadow();
+            circleHandler.updateDropShadow(m_circle);
         });
+
         // Keep a reference to the window
         window = primaryStage;
 
@@ -102,7 +103,8 @@ public class Main extends Application
     {
         m_circle.setFill(settingsHandler.getCircleColor());
         mainScene.setFill(settingsHandler.getBackGroundColor());
-        m_circle.setStroke(Main.settingsHandler.getCircleColor());
+        m_circle.setStroke(settingsHandler.getCircleColor());
+        m_circle.setRadius(settingsHandler.getNumberFromLine(3, "Circle Size: "));
     }
 
 

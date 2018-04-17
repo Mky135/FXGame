@@ -43,18 +43,19 @@ public class Point extends java.awt.Point
 
     double getAngle(double x1, double y1, double x2, double y2)
     {
-        double angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-        System.out.println(angle);
+        double deltaX = x1 - x2;
+        double deltaY = y1 - y2;
+        double angle;
+        if(deltaX > 0)
+        {
+            angle = Math.toDegrees(Math.atan(deltaY/deltaX));
+        }
+        else
+        {
+            angle = 180 + Math.toDegrees(Math.atan(deltaY/deltaX));
+        }
 
         return angle;
-    }
-
-    Point getPoint(double x1, double y1, double x2, double y2)
-    {
-        double deltaX = x2 - x1;
-        double deltaY = y2 - y1;
-
-        return new Point(deltaX, deltaY);
     }
 
     @Override

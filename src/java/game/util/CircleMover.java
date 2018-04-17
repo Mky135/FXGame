@@ -22,7 +22,7 @@ public class CircleMover
      *
      * acc
      */
-    private static int KEYBOARD_MOVEMENT_CHANGE = 2;
+    private static int KEYBOARD_MOVEMENT_CHANGE = 4;
 
     /**
      * Used to make the circle go to random positions
@@ -95,6 +95,8 @@ public class CircleMover
                 nodeDown(false);
                 nodeLeft();
             }
+
+            CircleHandler.updateDropShadow(circle);
         });
     }
 
@@ -170,6 +172,7 @@ public class CircleMover
                 transition.setToX(event.getSceneX() - circle.getCenterX());
                 transition.setToY(event.getSceneY() - circle.getCenterY());
                 transition.playFromStart();
+                CircleHandler.updateDropShadow(circle);
             }
         });
     }
@@ -183,6 +186,7 @@ public class CircleMover
             {
                 circle.setCenterY(r.nextInt((int) scene.getHeight()));
                 circle.setCenterX(r.nextInt((int) scene.getWidth()));
+                CircleHandler.updateDropShadow(circle);
                 try { Thread.sleep(tickSpeed); }
                 catch(InterruptedException e) { e.printStackTrace(); }
             }

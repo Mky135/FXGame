@@ -23,6 +23,9 @@ public class SettingsController implements Initializable
     private TextField tickSpeed;
 
     @FXML
+    private TextField circleSize;
+
+    @FXML
     private void setCircleColor()
     {
         SettingsHandler.settings.modifyLine(SettingsHandler.settings.getLine(0), getColorFormat("Circle", circleColorPicker.getValue()));
@@ -37,21 +40,28 @@ public class SettingsController implements Initializable
     @FXML
     private void continueOnToMainScreen()
     {
-        Main.switchToScene(Main.mainScene, "Game");
         setTickSpeed();
+        setCircleSize();
+        Main.switchToScene(Main.mainScene, "Game");
     }
 
     private void setTickSpeed()
     {
         SettingsHandler.settings.modifyLine(SettingsHandler.settings.getLine(2), getNumberFormat("Tick Speed", tickSpeed.getText()));
-        System.out.println(tickSpeed.getText());
     }
 
+    private void setCircleSize()
+    {
+        SettingsHandler.settings.modifyLine(SettingsHandler.settings.getLine(3), getNumberFormat("Circle Size", circleSize.getText()));
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        circleColorPicker.setValue(Main.settingsHandler.getCircleColor());
+        backgroundColorPicker.setValue(Main.settingsHandler.getBackGroundColor());
         tickSpeed.setText(String.valueOf(Main.settingsHandler.getNumberFromLine(2,"Tick Speed: ")));
+        circleSize.setText(String.valueOf(Main.settingsHandler.getNumberFromLine(3, "Circle Size: ")));
     }
 
     private String getColorFormat(String start, Color color)
