@@ -37,7 +37,7 @@
       </Label>
       <ColorPicker fx:id="circleColorPicker" onAction="#setCircleColor" GridPane.columnIndex="1" />
       <ColorPicker fx:id="backgroundColorPicker" onAction="#setBackgroundColor" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <Button fx:id="continue" mnemonicParsing="false" onAction="#continueOnToMainScreen" text="Continue" GridPane.columnIndex="4" />
+      <Button fx:id="continue" defaultButton="true" mnemonicParsing="false" onAction="#continueOnToMainScreen" text="Continue" GridPane.columnIndex="4" />
       <Label text="Tick Speed: " wrapText="true" GridPane.rowIndex="2">
          <font>
             <Font size="24.0" />

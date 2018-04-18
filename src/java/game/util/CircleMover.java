@@ -1,25 +1,29 @@
 package game.util;
 
 import game.Main;
+import javafx.animation.TranslateTransition;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
-import static game.util.CircleHandler.transition;
 
 public class CircleMover
 {
     /**
      * Used for movement using the keys
-     *
+     * <p>
      * vel
      */
     private static int KEYBOARD_MOVEMENT_DELTA = 10;
 
     /**
      * Local variable telling it how much to change by
-     *
+     * <p>
      * acc
      */
     private static int KEYBOARD_MOVEMENT_CHANGE = 4;
@@ -29,21 +33,51 @@ public class CircleMover
      */
     private static boolean random = false;
 
+    private final Duration TRANSLATE_DURATION = Duration.seconds(0.25);
+
     private static int tickSpeed;
 
     private Scene scene;
 
-    private Circle circle;
+    private Map<Circle, Boolean> circleEnabled = new HashMap<>();
+    private Map<Circle, TranslateTransition> circleTranslationMap = new HashMap<>();
 
-    public CircleMover(Scene scene, Circle circle)
+    private Map<Circle, CircleHandler> circleHandlerMap = new HashMap<>();
+
+    public CircleMover(Scene scene, CircleHandler[] circleHandlers, Circle... circles)
     {
         this.scene = scene;
-        this.circle = circle;
+
+        for(Circle circle : circles)
+        {
+            circleEnabled.put(circle, true);
+        }
+        for(Circle circle : circles)
+        {
+            TranslateTransition transition = createTranslateTransition(circle);
+            circleTranslationMap.put(circle, transition);
+        }
+        for(int i = 0; i < circleHandlers.length; i++)
+        {
+            circleHandlerMap.put(circles[i], circleHandlers[i]);
+        }
 
         moveNodeOnMousePress();
         moveOnKeyPress();
         stopOnKeyReleased();
-        moveNodeRandom();
+        moveCircleRandom();
+    }
+
+    private TranslateTransition createTranslateTransition(Circle circle)
+    {
+        final TranslateTransition transition = new TranslateTransition(TRANSLATE_DURATION, circle);
+        transition.setOnFinished(t -> {
+            circle.setCenterX(circle.getTranslateX() + circle.getCenterX());
+            circle.setCenterY(circle.getTranslateY() + circle.getCenterY());
+            circle.setTranslateX(0);
+            circle.setTranslateY(0);
+        });
+        return transition;
     }
 
     private boolean up = false;
@@ -54,85 +88,92 @@ public class CircleMover
     private void moveOnKeyPress()
     {
         scene.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.UP)
+            for(Circle circle : circleEnabled.keySet())
             {
-                up = true;
-                nodeUp(true);
-            }
-            if(event.getCode() == KeyCode.DOWN)
-            {
-                down = true;
-                nodeDown(true);
-            }
-            if(event.getCode() == KeyCode.RIGHT)
-            {
-                right = true;
-                nodeRight();
-            }
-            if(event.getCode() == KeyCode.LEFT)
-            {
-                left = true;
-                nodeLeft();
-            }
+                if(circleEnabled.get(circle))
+                {
+                    if(event.getCode() == KeyCode.UP)
+                    {
+                        up = true;
+                        nodeUp(true, circle);
+                    }
+                    if(event.getCode() == KeyCode.DOWN)
+                    {
+                        down = true;
+                        nodeDown(true, circle);
+                    }
+                    if(event.getCode() == KeyCode.RIGHT)
+                    {
+                        right = true;
+                        nodeRight(circle);
+                    }
+                    if(event.getCode() == KeyCode.LEFT)
+                    {
+                        left = true;
+                        nodeLeft(circle);
+                    }
 
-            if(up && right)
-            {
-                nodeUp(false);
-                nodeRight();
-            }
-            if(up && left)
-            {
-                nodeUp(false);
-                nodeLeft();
-            }
-            if(down && right)
-            {
-                nodeDown(false);
-                nodeRight();
-            }
-            if(down && left)
-            {
-                nodeDown(false);
-                nodeLeft();
-            }
+                    if(up && right)
+                    {
+                        nodeUp(false, circle);
+                        nodeRight(circle);
+                    }
+                    if(up && left)
+                    {
+                        nodeUp(false, circle);
+                        nodeLeft(circle);
+                    }
+                    if(down && right)
+                    {
+                        nodeDown(false, circle);
+                        nodeRight(circle);
+                    }
+                    if(down && left)
+                    {
+                        nodeDown(false, circle);
+                        nodeLeft(circle);
+                    }
 
-            CircleHandler.updateDropShadow(circle);
+                    circleHandlerMap.get(circle).updateDropShadow();
+                }
+            }
+            toggleCircle(event.getCode().toString());
         });
     }
 
-    private void nodeUp(boolean add)
+    private void nodeUp(boolean add, Circle circle)
     {
         circle.setCenterY(circle.getCenterY() - KEYBOARD_MOVEMENT_DELTA);
         if((circle.getCenterY() + circle.getRadius()) <= 0)
-        { circle.setCenterY(scene.getHeight() + circle.getRadius()/2); }
+        { circle.setCenterY(scene.getHeight() + circle.getRadius() / 2); }
 
         if(add)
-            KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
+        { KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE; }
     }
 
-    private void nodeDown(boolean add)
+    private void nodeDown(boolean add, Circle circle)
     {
         circle.setCenterY(circle.getCenterY() + KEYBOARD_MOVEMENT_DELTA);
         if((circle.getCenterY() - circle.getRadius()) >= scene.getHeight())
-        { circle.setCenterY(-circle.getRadius()/2); }
+        { circle.setCenterY(-circle.getRadius() / 2); }
 
         if(add)
-            KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
+        { KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE; }
     }
 
-    private void nodeRight()
+    private void nodeRight(Circle circle)
     {
         circle.setCenterX(circle.getCenterX() + KEYBOARD_MOVEMENT_DELTA);
         if((circle.getCenterX() - circle.getRadius()) >= scene.getWidth())
-        { circle.setCenterX(-circle.getRadius()/2); }
+        { circle.setCenterX(-circle.getRadius() / 2); }
         KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
     }
 
-    private void nodeLeft()
+    private void nodeLeft(Circle circle)
     {
         circle.setCenterX(circle.getCenterX() - KEYBOARD_MOVEMENT_DELTA);
         if((circle.getCenterX() + circle.getRadius()) <= 0)
-        { circle.setCenterX(scene.getWidth() + circle.getRadius()/2); }
+        { circle.setCenterX(scene.getWidth() + circle.getRadius() / 2); }
         KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
     }
 
@@ -162,40 +203,75 @@ public class CircleMover
     private void moveNodeOnMousePress()
     {
         scene.setOnMousePressed(event -> {
-            if(!event.isControlDown())
+            for(Circle circle : circleEnabled.keySet())
             {
-                circle.setCenterX(event.getSceneX());
-                circle.setCenterY(event.getSceneY());
-            }
-            else
-            {
-                transition.setToX(event.getSceneX() - circle.getCenterX());
-                transition.setToY(event.getSceneY() - circle.getCenterY());
-                transition.playFromStart();
-                CircleHandler.updateDropShadow(circle);
+                if(circleEnabled.get(circle))
+                {
+                    if(!event.isControlDown())
+                    {
+                        circle.setCenterX(event.getSceneX());
+                        circle.setCenterY(event.getSceneY());
+                    }
+                    else
+                    {
+                        circleTranslationMap.get(circle).setToX(event.getSceneX() - circle.getCenterX());
+                        circleTranslationMap.get(circle).setToY(event.getSceneY() - circle.getCenterY());
+                        circleTranslationMap.get(circle).playFromStart();
+                        circleHandlerMap.get(circle).updateDropShadow();
+                    }
+                }
             }
         });
     }
 
-    public void moveNodeRandom()
+    private void moveCircleRandom()
     {
-        tickSpeed = Main.settingsHandler.getNumberFromLine(2,"Tick Speed: ");
+        tickSpeed = Main.settingsHandler.getNumberFromLine(2, "Tick Speed: ");
         Random r = new Random();
-        new Thread(() ->{
+
+        new Thread(() -> {
             while(random)
             {
-                circle.setCenterY(r.nextInt((int) scene.getHeight()));
-                circle.setCenterX(r.nextInt((int) scene.getWidth()));
-                CircleHandler.updateDropShadow(circle);
-                try { Thread.sleep(tickSpeed); }
-                catch(InterruptedException e) { e.printStackTrace(); }
+                for(Circle circle : circleEnabled.keySet())
+                {
+                    if(circleEnabled.get(circle))
+                    {
+                        circle.setCenterY(r.nextInt((int) scene.getHeight()));
+                        circle.setCenterX(r.nextInt((int) scene.getWidth()));
+                        circleHandlerMap.get(circle).updateDropShadow();
+                        try { Thread.sleep(tickSpeed); }
+                        catch(InterruptedException e) { e.printStackTrace(); }
+                    }
+                }
             }
         }).start();
+    }
+
+    private void toggleCircle(String keyCode)
+    {
+        if(keyCode.contains("DIGIT"))
+        {
+            int numCode = Integer.valueOf(keyCode.substring(keyCode.length() - 1));
+            if(numCode <= circleEnabled.size())
+            {
+                int i = 0;
+                for(Circle circle : circleEnabled.keySet())
+                {
+                    if(i == numCode - 1)
+                    {
+                        circleEnabled.replace(circle, circleEnabled.get(circle), !circleEnabled.get(circle));
+                    }
+                    i++;
+                }
+                i = 0;
+            }
+        }
     }
 
     public void setRandom(boolean value)
     {
         random = value;
+        moveCircleRandom();
     }
 
     public boolean getRandom()

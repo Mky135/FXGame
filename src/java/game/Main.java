@@ -43,17 +43,25 @@ public class Main extends Application
      * Sets the CircleMover to be in the mainScreen controlling the circle
      */
     public static CircleMover mainCircleMover;
+    public static CircleMover extraCircleMover;
 
     public static SettingsHandler settingsHandler = new SettingsHandler();
 
     private static Circle m_circle;
+    private static Circle e_circle;
+    private static Circle e2_circle;
     private static CircleHandler circleHandler;
-
+    private static CircleHandler extraHandler;
+    private static CircleHandler extra2Handler;
     @Override
     public void start(Stage primaryStage) throws Exception
     {
         circleHandler = new CircleHandler();
+        extraHandler = new CircleHandler();
+        extra2Handler = new CircleHandler();
         m_circle = circleHandler.circle;
+        e_circle = extraHandler.circle;
+        e2_circle = extra2Handler.circle;
 
         primaryStage.setTitle("Start");
 
@@ -62,17 +70,25 @@ public class Main extends Application
         Parent mainRoot = FXMLLoader.load(getClass().getResource("mainScreen.fxml"));
         Parent settingsRoot = FXMLLoader.load(getClass().getResource("settingsScreen.fxml"));
 
-        Group group = new Group(m_circle, mainRoot);
+        Group group = new Group(m_circle, e_circle, e2_circle, mainRoot);
 
         Scene startScene = new Scene(startRoot);
         mainScene = new Scene(group, screenSize.width, screenSize.height, settingsHandler.getBackGroundColor());
         settingsScene = new Scene(settingsRoot);
-        mainCircleMover = new CircleMover(mainScene, m_circle);
+        CircleHandler[] circleHandlers = {circleHandler, extraHandler, extra2Handler};
+        mainCircleMover = new CircleMover(mainScene, circleHandlers, m_circle, e_circle, e2_circle);
 
         mainScene.setOnMouseMoved(event -> {
             circleHandler.light.setX(event.getX());
             circleHandler.light.setY(event.getY());
-            circleHandler.updateDropShadow(m_circle);
+            circleHandler.updateDropShadow();
+            extraHandler.light.setX(event.getX());
+            extraHandler.light.setY(event.getY());
+            extraHandler.updateDropShadow();
+
+            extra2Handler.light.setX(event.getX());
+            extra2Handler.light.setY(event.getY());
+            extra2Handler.updateDropShadow();
         });
 
         // Keep a reference to the window
@@ -101,9 +117,18 @@ public class Main extends Application
 
     private static void loadMain()
     {
-        m_circle.setFill(settingsHandler.getCircleColor());
         mainScene.setFill(settingsHandler.getBackGroundColor());
+
+        e_circle.setFill(settingsHandler.getCircleColor());
+        e2_circle.setFill(settingsHandler.getCircleColor());
+        m_circle.setFill(settingsHandler.getCircleColor());
+
+        e_circle.setStroke(settingsHandler.getCircleColor());
+        e2_circle.setStroke(settingsHandler.getCircleColor());
         m_circle.setStroke(settingsHandler.getCircleColor());
+
+        e_circle.setRadius(50);
+        e2_circle.setRadius(200);
         m_circle.setRadius(settingsHandler.getNumberFromLine(3, "Circle Size: "));
     }
 

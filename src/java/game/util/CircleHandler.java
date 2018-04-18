@@ -1,27 +1,21 @@
 package game.util;
 
 import game.Main;
-import javafx.animation.TranslateTransition;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
-import javafx.util.Duration;
 
 public class CircleHandler extends Circle
 {
-    static TranslateTransition transition;
-    private static final Duration TRANSLATE_DURATION = Duration.seconds(0.25);
-    public Circle circle;
-    private static DropShadow dropShadow = new DropShadow();
-    public static Point light = new Point(0, 1);
+    public  Circle circle;
+    private DropShadow dropShadow = new DropShadow();
+    public Point light = new Point(0, 1);
 
     public CircleHandler()
     {
         circle = createCircle();
-        transition = createTranslateTransition(circle);
-        createTranslateTransition(circle);
-        updateDropShadow(circle);
+        updateDropShadow();
     }
 
     private Circle createCircle()
@@ -34,22 +28,10 @@ public class CircleHandler extends Circle
         return circle;
     }
 
-    private TranslateTransition createTranslateTransition(final Circle circle)
+    public void updateDropShadow()
     {
-        final TranslateTransition transition = new TranslateTransition(TRANSLATE_DURATION, circle);
-        transition.setOnFinished(t -> {
-            circle.setCenterX(circle.getTranslateX() + circle.getCenterX());
-            circle.setCenterY(circle.getTranslateY() + circle.getCenterY());
-            circle.setTranslateX(0);
-            circle.setTranslateY(0);
-        });
-        return transition;
-    }
+        Point offset = getOffsetFromLighting();
 
-    public static void updateDropShadow(Circle circle)
-    {
-        Point offset = getOffsetFromLighting(circle);
-//        System.out.println(offset);
         dropShadow.setRadius(circle.getRadius()/2);
         dropShadow.setOffsetX(offset.getX());
         dropShadow.setOffsetY(offset.getY());
@@ -58,7 +40,7 @@ public class CircleHandler extends Circle
         circle.setEffect(dropShadow);
     }
 
-    private static Point getOffsetFromLighting(Circle circle)
+    private Point getOffsetFromLighting()
     {
         double radius = circle.getRadius()/2;
         double lX = light.getX();

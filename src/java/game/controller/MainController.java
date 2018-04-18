@@ -1,10 +1,8 @@
 package game.controller;
 
 import game.Main;
-import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.shape.Circle;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -14,7 +12,6 @@ public class MainController implements Initializable
     private void makeRandom()
     {
         Main.mainCircleMover.setRandom(!Main.mainCircleMover.getRandom());
-        Main.mainCircleMover.moveNodeRandom();
     }
 
     @FXML
