@@ -4,13 +4,12 @@ import game.Main;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+
+import game.util.CircleMap.Direction;
 
 public class CircleMover
 {
@@ -39,23 +38,28 @@ public class CircleMover
 
     private Scene scene;
 
+    Circle[] circles;
+    private CircleMap circleMap;
+
     private Map<Circle, Boolean> circleEnabled = new HashMap<>();
     private Map<Circle, TranslateTransition> circleTranslationMap = new HashMap<>();
 
     private Map<Circle, CircleHandler> circleHandlerMap = new HashMap<>();
+    private ArrayList<Circle> blockers;
 
-    public CircleMover(Scene scene, CircleHandler[] circleHandlers, Circle... circles)
+    public CircleMover(Scene scene, CircleHandler[] circleHandlers, ArrayList<Circle> blockers, Circle... circles)
     {
         this.scene = scene;
+        this.circles = circles;
+        this.blockers = blockers;
+        circleMap = new CircleMap();
 
-        for(Circle circle : circles)
-        {
-            circleEnabled.put(circle, true);
-        }
         for(Circle circle : circles)
         {
             TranslateTransition transition = createTranslateTransition(circle);
             circleTranslationMap.put(circle, transition);
+            circleEnabled.put(circle, true);
+            circleMap.put(circle, Direction.NONE);
         }
         for(int i = 0; i < circleHandlers.length; i++)
         {
@@ -88,52 +92,56 @@ public class CircleMover
     private void moveOnKeyPress()
     {
         scene.setOnKeyPressed(event -> {
+
+            Point prevCircle = new Point();
+
             for(Circle circle : circleEnabled.keySet())
             {
+                prevCircle.setPoint(circle.getCenterX(), circle.getCenterY());
+
                 if(circleEnabled.get(circle))
                 {
                     if(event.getCode() == KeyCode.UP)
                     {
                         up = true;
-                        nodeUp(true, circle);
+                        move(true, circle, Direction.UP);
                     }
                     if(event.getCode() == KeyCode.DOWN)
                     {
                         down = true;
-                        nodeDown(true, circle);
+                        move(true, circle, Direction.DOWN);
                     }
                     if(event.getCode() == KeyCode.RIGHT)
                     {
                         right = true;
-                        nodeRight(circle);
+                        move(true, circle, Direction.RIGHT);
                     }
                     if(event.getCode() == KeyCode.LEFT)
                     {
                         left = true;
-                        nodeLeft(circle);
+                        move(true, circle, Direction.LEFT);
                     }
 
                     if(up && right)
                     {
-                        nodeUp(false, circle);
-                        nodeRight(circle);
+                        move(false, circle, Direction.UP);
+                        move(true, circle, Direction.RIGHT);
                     }
                     if(up && left)
                     {
-                        nodeUp(false, circle);
-                        nodeLeft(circle);
+                        move(false, circle, Direction.UP);
+                        move(true, circle, Direction.LEFT);
                     }
                     if(down && right)
                     {
-                        nodeDown(false, circle);
-                        nodeRight(circle);
+                        move(false, circle, Direction.DOWN);
+                        move(true, circle, Direction.RIGHT);
                     }
                     if(down && left)
                     {
-                        nodeDown(false, circle);
-                        nodeLeft(circle);
+                        move(false, circle, Direction.DOWN);
+                        move(true, circle, Direction.LEFT);
                     }
-
                     circleHandlerMap.get(circle).updateDropShadow();
                 }
             }
@@ -141,40 +149,80 @@ public class CircleMover
         });
     }
 
-    private void nodeUp(boolean add, Circle circle)
+    private void move(boolean add, Circle circle, Direction direction)
     {
-        circle.setCenterY(circle.getCenterY() - KEYBOARD_MOVEMENT_DELTA);
+        for(int i = 0; i < KEYBOARD_MOVEMENT_DELTA; i++)
+        {
+            for(Direction dirc : circleMap.get(circle))
+            {
+                if(dirc != direction)
+                {
+                    switch(direction)
+                    {
+                        case UP:
+                            circle.setCenterY(circle.getCenterY() - 1);
+                            break;
+                        case DOWN:
+                            circle.setCenterY(circle.getCenterY() + 1);
+                            break;
+                        case RIGHT:
+                            circle.setCenterX(circle.getCenterX() + 1);
+                            break;
+                        case LEFT:
+                            circle.setCenterX(circle.getCenterX() - 1);
+                            break;
+                    }
+
+                    if(hitBlocker(circle))
+                    {
+                        if(circleMap.get(circle).length <= 1)
+                        {
+                            circleMap.replace(circle, direction);
+                        }
+                        else
+                        {
+                            circleMap.addDirection(circle, direction);
+                        }
+                    }
+                }
+                else if(!hitBlocker(circle))
+                {
+                    if(circleMap.get(circle).length <= 1)
+                    {
+                        circleMap.replace(circle, Direction.NONE);
+                    }
+                    else
+                    {
+                        circleMap.removeDirection(circle, direction);
+                    }
+                }
+            }
+        }
+
+        switch(direction)
+        {
+            case UP:
+                if((circle.getCenterY() + circle.getRadius()) <= 0)
+                { circle.setCenterY(scene.getHeight() + circle.getRadius() / 2); }
+                break;
+            case DOWN:
+                if((circle.getCenterY() - circle.getRadius()) >= scene.getHeight())
+                { circle.setCenterY(-circle.getRadius() / 2); }
+                break;
+            case LEFT:
+                if((circle.getCenterX() + circle.getRadius()) <= 0)
+                { circle.setCenterX(scene.getWidth() + circle.getRadius() / 2); }
+                break;
+            case RIGHT:
+                if((circle.getCenterX() - circle.getRadius()) >= scene.getWidth())
+                { circle.setCenterX(-circle.getRadius() / 2); }
+                break;
+        }
         if((circle.getCenterY() + circle.getRadius()) <= 0)
         { circle.setCenterY(scene.getHeight() + circle.getRadius() / 2); }
 
         if(add)
         { KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE; }
-    }
-
-    private void nodeDown(boolean add, Circle circle)
-    {
-        circle.setCenterY(circle.getCenterY() + KEYBOARD_MOVEMENT_DELTA);
-        if((circle.getCenterY() - circle.getRadius()) >= scene.getHeight())
-        { circle.setCenterY(-circle.getRadius() / 2); }
-
-        if(add)
-        { KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE; }
-    }
-
-    private void nodeRight(Circle circle)
-    {
-        circle.setCenterX(circle.getCenterX() + KEYBOARD_MOVEMENT_DELTA);
-        if((circle.getCenterX() - circle.getRadius()) >= scene.getWidth())
-        { circle.setCenterX(-circle.getRadius() / 2); }
-        KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
-    }
-
-    private void nodeLeft(Circle circle)
-    {
-        circle.setCenterX(circle.getCenterX() - KEYBOARD_MOVEMENT_DELTA);
-        if((circle.getCenterX() + circle.getRadius()) <= 0)
-        { circle.setCenterX(scene.getWidth() + circle.getRadius() / 2); }
-        KEYBOARD_MOVEMENT_DELTA += KEYBOARD_MOVEMENT_CHANGE;
     }
 
     private void stopOnKeyReleased()
@@ -263,10 +311,28 @@ public class CircleMover
                     }
                     i++;
                 }
-                i = 0;
             }
         }
     }
+
+    //(x2-x1)^2 + (y1-y2)^2 <= (r1+r2)^2
+    private boolean hitBlocker(Circle circle)
+    {
+        for(Circle blocker : blockers)
+        {
+            double deltaX = Math.pow((blocker.getCenterX() - circle.getCenterX()), 2);
+            double deltaY = Math.pow((blocker.getCenterY() - circle.getCenterY()), 2);
+            double deltaR = Math.pow((circle.getRadius() + blocker.getRadius()), 2);
+
+            if(deltaX + deltaY <= deltaR)
+            {
+//                circle.setCenterX();
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public void setRandom(boolean value)
     {
@@ -278,4 +344,11 @@ public class CircleMover
     {
         return random;
     }
+
+    public Circle[] getCircles()
+    {
+        return circles;
+    }
+
+
 }

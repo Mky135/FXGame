@@ -1,5 +1,6 @@
 package game;
 
+import game.controller.MainController;
 import game.util.CircleHandler;
 import game.util.CircleMover;
 import game.util.SettingsHandler;
@@ -8,10 +9,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Main extends Application
 {
@@ -43,16 +46,20 @@ public class Main extends Application
      * Sets the CircleMover to be in the mainScreen controlling the circle
      */
     public static CircleMover mainCircleMover;
-    public static CircleMover extraCircleMover;
 
     public static SettingsHandler settingsHandler = new SettingsHandler();
 
     private static Circle m_circle;
     private static Circle e_circle;
     private static Circle e2_circle;
+    private static Circle block;
+
     private static CircleHandler circleHandler;
     private static CircleHandler extraHandler;
     private static CircleHandler extra2Handler;
+
+    private ArrayList<Circle> blockers = new ArrayList<>();
+
     @Override
     public void start(Stage primaryStage) throws Exception
     {
@@ -60,9 +67,16 @@ public class Main extends Application
         extraHandler = new CircleHandler();
         extra2Handler = new CircleHandler();
         m_circle = circleHandler.circle;
+        block = new Circle();
+        block.setStroke(Color.WHITE);
+        block.setFill(Color.WHITE);
+        block.setRadius(50);
+        block.setCenterY(500);
+        block.setCenterX(500);
         e_circle = extraHandler.circle;
         e2_circle = extra2Handler.circle;
 
+        blockers.add(block);
         primaryStage.setTitle("Start");
 
         // Build all of the scenes
@@ -70,13 +84,13 @@ public class Main extends Application
         Parent mainRoot = FXMLLoader.load(getClass().getResource("mainScreen.fxml"));
         Parent settingsRoot = FXMLLoader.load(getClass().getResource("settingsScreen.fxml"));
 
-        Group group = new Group(m_circle, e_circle, e2_circle, mainRoot);
+        Group group = new Group(m_circle, e_circle, e2_circle, block, mainRoot);
 
         Scene startScene = new Scene(startRoot);
         mainScene = new Scene(group, screenSize.width, screenSize.height, settingsHandler.getBackGroundColor());
         settingsScene = new Scene(settingsRoot);
-        CircleHandler[] circleHandlers = {circleHandler, extraHandler, extra2Handler};
-        mainCircleMover = new CircleMover(mainScene, circleHandlers, m_circle, e_circle, e2_circle);
+        CircleHandler[] circleHandlers = { circleHandler, extraHandler, extra2Handler };
+        mainCircleMover = new CircleMover(mainScene, circleHandlers, blockers, m_circle, e_circle, e2_circle);
 
         mainScene.setOnMouseMoved(event -> {
             circleHandler.light.setX(event.getX());
@@ -112,7 +126,7 @@ public class Main extends Application
         window.setScene(scene);
 
         if(scene == mainScene)
-            loadMain();
+        { loadMain(); }
     }
 
     private static void loadMain()
@@ -130,8 +144,11 @@ public class Main extends Application
         e_circle.setRadius(50);
         e2_circle.setRadius(200);
         m_circle.setRadius(settingsHandler.getNumberFromLine(3, "Circle Size: "));
-    }
 
+        block.setStroke(Color.WHITE);
+
+        MainController.INSTANCE.setLabel();
+    }
 
     public static void main(String[] args)
     {
